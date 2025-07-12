@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: |
+  EC2 instance for static web page
+  
+Parameters:
+
+  ec2KeyPair:
+    Description: Keypair keyname
+    Type: AWS::EC2::KeyPair::KeyName
+  
+Resources:
+
+  ec2SgMain:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow ssh and http from anywhere
+      GroupName: Moumen-carousel-sg
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  ec2InstanceWebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: Moumen-webserver
+      ImageId: ami-05ffe3c48a9991133
+      InstanceType: t3.micro
+      KeyName:
+        Ref: ec2KeyPair
+      SecurityGroupIds: 
+        - Fn::GetAtt:
+            - ec2SgMain
+            - GroupId
+      UserData: String
+
+
+  
+#Outputs:
+  #Outputs:
